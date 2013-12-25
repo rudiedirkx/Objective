@@ -2,6 +2,8 @@
 
 class ObjectStore {
 	public $file;
+	public $decodeFail = array();
+
 	function __construct( $file = null, $load = true ) {
 		$file or defined('OBJECT_STORE_FILE') and $file = OBJECT_STORE_FILE;
 		$this->file = $file;
@@ -12,7 +14,7 @@ class ObjectStore {
 	function decode( $data ) {
 		$value = @json_decode($data, true);
 		if (json_last_error()) {
-			$value = array();
+			$value = $this->decodeFail;
 		}
 		return $value;
 	}
