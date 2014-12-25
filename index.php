@@ -5,8 +5,8 @@ define('_START', microtime(1));
 require __DIR__ . '/env.php';
 require __DIR__ . '/ObjectStore.php';
 
-$store = isset($_REQUEST['store']) ? preg_replace('#[^\w@\.\-]#i', '', basename($_REQUEST['store'])) : '';
-define('OBJECT_STORE_FILE', WHERE_STORES_AT . '/' . ( $store ?: 'default$' ) . '.json');
+$store = isset($_REQUEST['store']) ? trim(basename($_REQUEST['store'])) : '';
+define('OBJECT_STORE_FILE', WHERE_STORES_AT . '/' . ObjectStore::filename($store));
 
 if ( isset($_GET['debug']) ) {
 	$store = new ObjectStore(OBJECT_STORE_FILE);

@@ -2,6 +2,10 @@
 
 class ObjectStore {
 
+	static function filename( $store ) {
+		return ( $store ? preg_replace('#[^\w@\.\-]#i', '', $store) : 'default$' ) . '.json';
+	}
+
 	public $file = '';
 	public $store = null;
 
