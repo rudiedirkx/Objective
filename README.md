@@ -18,17 +18,17 @@ it at `example.com/Objective/`, or wherever you put it.
 
 There are 3 web API methods:
 
-* *get*
+* *get*  
   requires 1 param: `get`, with the hierarchical tree of the value,
   e.g. `people.john.location.street`, which would look for:
   `{"people": {"john": {"location": {"street": ...}}}}`
   where the `...` can be anything.
-* *put*
+* *put*  
   requires 2 params: `put` and `value`, where `put` is the same as `get` in the
   above method and `value` is a JSON encoded string of the value, e.g.: `"Elmstreet"`, or
   if you want to save john's whole location at once:
   `{"street": "Elmstreet", "number": "10a", "postal": "12345", "state": "XY", "country": "AB"}`
-* *delete*
+* *delete*  
   requires 1 param: `delete`, with the same format as `get` and `put` above. Takes an
   additional param `clean` to clean up the container, if it's empty after deletion.
 
@@ -41,14 +41,14 @@ Internal API
 
 The `ObjectStore` PHP class a few functions:
 
-* *encoding/decoding*
+* *encoding/decoding*  
   Since you might not want JSON, the `encode($data)` and `decode($data)` methods are public and
   overridable. They both accept 1 argument `$data` and return the result.
-* *filesystem*
+* *filesystem*  
   The store reads from and writes to the filesystem as little as possible. The entire store
   contents are cached in the store object, so both methods `load()` and `save()` take no
   arguments and the return values are irrelevant.
-* *public*
+* *public*  
   To fetch or update anything from/in the store (cache), use `get($name, &$found)`,
   `put($name, $value)` and `delete($name)`. They behave like the web API. `&$found` and `delete()`'s
   return value will be bool depending on whether the requested var exists/existed in the store.
