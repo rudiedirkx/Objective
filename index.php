@@ -6,7 +6,10 @@ require __DIR__ . '/env.php';
 require __DIR__ . '/ObjectStore.php';
 
 if ( !ObjectStore::validStoreName(@$_REQUEST['store']) ) {
-	exit('Invalid store name.');
+	$store = new ObjectStore('/tmp/tmp');
+	return $store->output(array(
+		'error' => 'Invalid store name',
+	));
 }
 $store = WHERE_STORES_AT . '/' . ObjectStore::filename($_REQUEST['store']);
 

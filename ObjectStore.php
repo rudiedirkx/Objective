@@ -117,7 +117,7 @@ class ObjectStore {
 		}
 
 		if ( defined('_START') ) {
-			$time = (microtime(1) - _START)*1000;
+			$time = round((microtime(1) - _START)*1000, 4);
 			$data['time'] = $time;
 			header('X-script-time: ' . $time . ' ms');
 		}
@@ -126,4 +126,5 @@ class ObjectStore {
 		echo $output;
 		exit;
 	}
+
 }
