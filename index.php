@@ -5,11 +5,13 @@ define('_START', microtime(1));
 require __DIR__ . '/env.php';
 require __DIR__ . '/ObjectStore.php';
 
-$store = isset($_REQUEST['store']) ? trim(basename($_REQUEST['store'])) : '';
-define('OBJECT_STORE_FILE', WHERE_STORES_AT . '/' . ObjectStore::filename($store));
+if ( !ObjectStore::validStoreName(@$_REQUEST['store']) ) {
+	exit('Invalid store name.');
+}
+$store = WHERE_STORES_AT . '/' . ObjectStore::filename($_REQUEST['store']);
 
 if ( isset($_GET['debug']) ) {
-	$store = new ObjectStore(OBJECT_STORE_FILE);
+	$store = new ObjectStore($store);
 
 	// Not CORS, not JSON
 	header('Content-type: text/plain');
@@ -24,7 +26,7 @@ $value = @$_REQUEST['value'];
 
 // GET
 if ( $get ) {
-	$store = new ObjectStore(OBJECT_STORE_FILE);
+	$store = new ObjectStore($store);
 	$value = $store->get($get, $exists);
 
 	return $store->output(array('error' => 0, 'exists' => $exists, 'value' => $value));
@@ -32,7 +34,7 @@ if ( $get ) {
 
 // DELETE
 else if ( $delete ) {
-	$store = new ObjectStore(OBJECT_STORE_FILE);
+	$store = new ObjectStore($store);
 	$existed = $store->delete($delete, !empty($_GET['clean']));
 	if ( $existed ) {
 		$store->save();
@@ -43,7 +45,7 @@ else if ( $delete ) {
 
 // PUT
 else if ( $put && $value !== null && $value !== '' ) {
-	$store = new ObjectStore(OBJECT_STORE_FILE);
+	$store = new ObjectStore($store);
 
 	try {
 		$value = $store->decode($value);
@@ -57,3 +59,5 @@ else if ( $put && $value !== null && $value !== '' ) {
 
 	return $store->output(array('error' => 0, 'value' => $value));
 }
+
+exit('Invalid request.');

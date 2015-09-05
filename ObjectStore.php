@@ -2,12 +2,17 @@
 
 class ObjectStore {
 
+	static function validStoreName( $name ) {
+		return $name && is_scalar($name) && preg_match('#^[\w\d\-@\.]{6,40}$#', $name);
+	}
+
 	static function filename( $store ) {
-		return ( $store ? preg_replace('#[^\w@\.\-]#i', '', $store) : 'default$' ) . '.json';
+		return preg_replace('#\.+#', '.', $store) . '.json';
 	}
 
 	public $file = '';
 	public $store = null;
+	public $antiHijack = 'while(1);';
 
 	function __construct( $file, $load = true ) {
 		$this->file = $file;
@@ -103,14 +108,19 @@ class ObjectStore {
 
 	function output( $data, $cors = true ) {
 		$cors && header('Access-Control-Allow-Origin: *');
-		$antiHijack = 'while(1);';
 
 		header('Content-type: text/json');
-		header('X-anti-hijack: ' . strlen($antiHijack));
+		if ( $this->antiHijack ) {
+			header('X-anti-hijack: ' . strlen($this->antiHijack));
+		}
 
-		$output = $antiHijack . $this->encode($data);
+		if ( defined('_START') ) {
+			$time = (microtime(1) - _START)*1000;
+			$data['time'] = $time;
+			header('X-script-time: ' . $time . ' ms');
+		}
 
-		header('X-script-time: ' . ((microtime(1) - _START)*1000) . ' ms');
+		$output = $this->antiHijack . $this->encode($data);
 		echo $output;
 		exit;
 	}
