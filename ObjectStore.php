@@ -22,7 +22,7 @@ class ObjectStore {
 	function decode( $data ) {
 		$value = @json_decode($data, true);
 		if ($error = json_last_error()) {
-			throw new Exception($error);
+			throw new InvalidArgumentException('json decode error # ' . $error);
 		}
 		return $value;
 	}
@@ -108,6 +108,8 @@ class ObjectStore {
 
 	function output( $data, $cors = true ) {
 		$cors && header('Access-Control-Allow-Origin: *');
+
+		$data += array('error' => 0);
 
 		header('Content-type: text/json');
 		if ( $this->antiHijack ) {
