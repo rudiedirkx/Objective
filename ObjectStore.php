@@ -107,7 +107,10 @@ class ObjectStore {
 	}
 
 	function output( $data, $cors = true ) {
-		$cors && header('Access-Control-Allow-Origin: *');
+		if ( $cors ) {
+			header('Access-Control-Allow-Origin: *');
+			header('Access-Control-Expose-Headers: X-anti-hijack');
+		}
 
 		$data += array('error' => 0);
 
