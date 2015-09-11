@@ -1,13 +1,13 @@
 Objective
 ====
 
-Objective is a very small, VERY fast PHP-JSON object store.
+Objective is a very small, very fast PHP-JSON object store.
 
 Get started
 ----
 
 Copy `env.php.orig` to `env.php` and change the constant to where you want to keep
-your super secret stores. They're JSON files, like `default$.json` (default) or
+your super secret stores. They're JSON files, like `bfde0220.json` or
 `yourname@gmail.com.json`.
 
 Web API
@@ -16,7 +16,10 @@ Web API
 Everything goes into `index.php` (probably your server's index script), so you can call
 it at `example.com/Objective/`, or wherever you put it.
 
-There are 3 web API methods:
+There's a mandatory param `store`, which functions as your username and password combined. One
+store is one file, so that one file is yours alone. Make it something unguessable, like a UUID.
+
+There are 5 web API methods (not HTTP verbs):
 
 * *get*  
   requires 1 param: `get`, with the hierarchical tree of the value,
@@ -31,6 +34,15 @@ There are 3 web API methods:
 * *delete*  
   requires 1 param: `delete`, with the same format as `get` and `put` above. Takes an
   additional param `clean` to clean up the container, if it's empty after deletion.
+* *push*  
+  requires 2 params: `push` and `value`, where `push` is like `get`, and `value` is a JSON
+  encoded **scalar** (string/int/float/bool). The path in `push` must be an array, or will
+  be converted into one. The given `value` will be appended to the array and the entire array
+  will be returned. There's an extra param `unique` to keep the array values unique.
+* *pull*  
+  works exactly like *push*, including `unique`, but will remove `value` from the array.
+
+Both GET and POST requests are supported, meaning you can `put` a value using a GET request.
 
 All JSON output will be prefixed with an anti-JSON-hijacking 'script': `while(1);` by default.
 The length of this script will be added to HTTP header `X-anti-hijack` so your client can
