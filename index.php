@@ -147,4 +147,7 @@ else if ( ($push XOR $pull) && strlen($value) ) {
 	));
 }
 
-exit('Invalid request.');
+$store = new ObjectStore('/tmp/tmp');
+return $store->output(array(
+	'error' => 'Invalid request (action/method/params)',
+));
