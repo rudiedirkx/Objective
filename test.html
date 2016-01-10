@@ -2,4 +2,7 @@
 <script>
 var store = new ObjectStore(location.href.replace(/\/[^\/]*$/, '/'), 'oeleboele');
 console.log(store);
+
+var promise = store.get('foo');
+promise.then(console.log.bind(console), console.warn.bind(console));
 </script>

@@ -1,4 +1,5 @@
 ObjectStore = function(url, store) {
+	this.url = url;
 	function req(data) {
 		var p = new Promise(function(resolve, reject) {
 			var datas = '';
