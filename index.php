@@ -94,12 +94,6 @@ else if ( ($push XOR $pull) && strlen($value) ) {
 		));
 	}
 
-	if ( !is_scalar($value) ) {
-		return $store->output(array(
-			'error' => 'value must me scalar',
-		));
-	}
-
 	$list = $store->get($var, $exists);
 	if ( !$exists || !is_array($list) ) {
 		$list = array();
@@ -107,7 +101,19 @@ else if ( ($push XOR $pull) && strlen($value) ) {
 	}
 	else {
 		$pre = $list;
-		$list = array_values(array_filter($list, 'is_scalar'));
+		$list = array_values($list);
+	}
+
+	$index = array_search($value, $list, true);
+
+	function array_unique_nonscalar($array) {
+		$out = array();
+		foreach ( $array as $value ) {
+			if ( !in_array($value, $out) ) {
+				$out[] = $value;
+			}
+		}
+		return $out;
 	}
 
 	// PUSH
@@ -115,21 +121,20 @@ else if ( ($push XOR $pull) && strlen($value) ) {
 		$list[] = $value;
 
 		if ( $unique ) {
-			$list = array_values(array_unique($list));
+			$list = array_unique_nonscalar($list);
 		}
 	}
 
 	// PULL
 	else {
 		if ( $unique ) {
-			$list = array_unique($list);
+			$list = array_unique_nonscalar($list);
 		}
 
-		if ( ($index = array_search($value, $list)) !== FALSE ) {
-			unset($list[$index]);
+		if ( $index !== false ) {
+			$index = array_search($value, $list, true);
+			array_splice($list, $index, 1);
 		}
-
-		$list = array_values($list);
 	}
 
 	// Only save if we changed something
