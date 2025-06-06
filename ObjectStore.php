@@ -15,6 +15,10 @@ class ObjectStore {
 	public $antiHijack = 'while(1);';
 
 	function __construct( $file, $load = true ) {
+		if (defined('JS_ANTIHIJACK')) {
+			$this->antiHijack = JS_ANTIHIJACK;
+		}
+
 		$this->file = $file;
 		$load and $this->load();
 	}
@@ -114,10 +118,13 @@ class ObjectStore {
 
 		$data += array('error' => 0);
 
-		header('Content-type: text/json');
-		if ( $this->antiHijack ) {
-			header('X-anti-hijack: ' . strlen($this->antiHijack));
+		if ( strlen($this->antiHijack) ) {
+			header('Content-type: text/plain');
 		}
+		else {
+			header('Content-type: application/json');
+		}
+		header('X-anti-hijack: ' . strlen($this->antiHijack));
 
 		if ( defined('_START') ) {
 			$time = round((microtime(1) - _START)*1000, 4);
